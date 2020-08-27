@@ -1,0 +1,33 @@
+{
+  "name": "sellerieconcept",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "pm2 start ./ecosystem.config.js --no-daemon"
+  },
+  "author": "Eliot LE GALL",
+  "license": "ISC",
+  "dependencies": {
+    "argon2": "^0.27.0",
+    "bcrypt": "^3.0.2",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "cron": "^1.7.1",
+    "dotenv": "^6.1.0",
+    "express": "^4.16.3",
+    "firebase-admin": "^6.1.0",
+    "ip": "^1.1.5",
+    "jsonwebtoken": "^8.3.0",
+    "moment": "^2.22.2",
+    "multer": "^1.4.2",
+    "nodemailer": "^4.7.0",
+    "path": "^0.12.7",
+    "pm2": "^3.5.1",
+    "randomstring": "^1.1.5",
+    "request": "^2.88.0",
+    "sequelize": "^4.39.0",
+    "sqlite3": "^4.0.8"
+  }
+}
