@@ -213,6 +213,25 @@ class Login {
     }
   }
 
+  async isLoggedIn(body) {
+    try {
+      if (body.cookie == null || body.cookie.length < 1)
+        return ({success: false});
+      let login = await mLogin.findOne({
+        where: {
+          loginCookie: body.cookie
+        }
+      });
+      if (login == null)
+        return ({success: false});
+      else
+        return ({success: true});
+    } catch (err) {
+      console.error(err);
+      return ({success: false, error: err});
+    }
+  }
+
 }
 
 module.exports = Login;

@@ -76,4 +76,15 @@ router.post("/account/newPassword", cors(corsOptions), async(req, res) => {
     }
 });
 
+router.post("/account/isLoggedIn", cors(corsOptions), async(req, res) => {
+    const l = new Login();
+    try {
+        const value = await l.isLoggedIn(req.body);
+        res.json(value);
+    } catch (err) {
+        console.error("error: ", err);
+        res.json(err);
+    }
+});
+
 module.exports = router;
