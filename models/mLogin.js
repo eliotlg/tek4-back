@@ -12,7 +12,8 @@ const mLogin = db.define('Login', {
   validated: Sequelize.BOOLEAN,
   forgotHash: Sequelize.TEXT,
   email: Sequelize.TEXT,
-  passwordHash: Sequelize.TEXT
+  passwordHash: Sequelize.TEXT,
+  admin: Sequelize.BOOLEAN
 });
 
 module.exports = mLogin;

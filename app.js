@@ -7,6 +7,9 @@ const port = process.env.PORT || 3000;
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 var CronJob = require('cron').CronJob;
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 app.use(bodyParser.json()); // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({ // to support URL-encoded bodies

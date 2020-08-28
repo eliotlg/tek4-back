@@ -21,7 +21,7 @@ var corsOptions = {
     origin: '*'
 }
 
-router.post("/accout/create", cors(corsOptions), async(req, res) => {
+router.post("/account/create", cors(corsOptions), async(req, res) => {
     const l = new Login();
     try {
         const value = await l.create(req.body);
@@ -32,10 +32,43 @@ router.post("/accout/create", cors(corsOptions), async(req, res) => {
     }
 });
 
-router.post("/accout/login", cors(corsOptions), async(req, res) => {
+router.post("/account/login", cors(corsOptions), async(req, res) => {
     const l = new Login();
     try {
         const value = await l.login(req.body);
+        res.json(value);
+    } catch (err) {
+        console.error("error: ", err);
+        res.json(err);
+    }
+});
+
+router.get("/account/validate/:id", cors(corsOptions), async(req, res) => {
+    const l = new Login();
+    try {
+        const value = await l.validate(req.params);
+        res.json(value);
+    } catch (err) {
+        console.error("error: ", err);
+        res.json(err);
+    }
+});
+
+router.post("/account/forgot", cors(corsOptions), async(req, res) => {
+    const l = new Login();
+    try {
+        const value = await l.forgotPassword(req.body);
+        res.json(value);
+    } catch (err) {
+        console.error("error: ", err);
+        res.json(err);
+    }
+});
+
+router.post("/account/newPassword", cors(corsOptions), async(req, res) => {
+    const l = new Login();
+    try {
+        const value = await l.newPassword(req.body);
         res.json(value);
     } catch (err) {
         console.error("error: ", err);
