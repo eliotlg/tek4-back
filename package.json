@@ -28,6 +28,7 @@
     "randomstring": "^1.1.5",
     "request": "^2.88.0",
     "sequelize": "^4.39.0",
-    "sqlite3": "^4.0.8"
+    "sqlite3": "^4.0.8",
+    "uuid": "^8.3.0"
   }
 }

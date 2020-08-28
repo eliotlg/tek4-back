@@ -7,6 +7,7 @@ const nodemailer = require("nodemailer");
 var randomstring = require("randomstring");
 const argon2 = require('argon2');
 const dotenv = require('dotenv');
+const { v4: uuidv4 } = require('uuid');
 
 dotenv.config();
 
@@ -28,7 +29,7 @@ class Login {
       if (exists != null) // Vérifier si il n'y a pas déjà un compte sur la même addresse
         return ({success: false, error: "Account already exists"});
       const passwordHash = await argon2.hash(body.password);
-      const emailHash = await argon2.hash(body.email + new Date().toDateString());
+      const emailHash = uuidv4();
       const login = await mLogin.create({
         loginCookie: "",
         validationHash: emailHash,
@@ -50,8 +51,8 @@ class Login {
           rejectUnauthorized: false
         }
       });
-      let emailText = `Lien de confirmation : ${process.env.BACK}/account/validate/id=${emailHash}`;
-      let emailHtml = `<a href="${process.env.BACK}/account/validate/id=${emailHash}" style="font-size: 26px">Lien de confirmation</a>`;
+      let emailText = `Lien de confirmation : ${process.env.BACK}/account/validate/${emailHash}`;
+      let emailHtml = `<a href="${process.env.BACK}/account/validate/${emailHash}" style="font-size: 26px">Lien de confirmation</a>`;
       let info = await transporter.sendMail({
         from: `noreply rednight <noreply.rednight@gmail.com>`,
         replyTo: `noreply.rednight@gmail.com`,
@@ -89,7 +90,7 @@ class Login {
       if (login == null)
         return ({success: false, error: "Email does not match"});
       if (await argon2.verify(login.passwordHash, body.password)) {
-        if (login.loginCookie == "") {
+        if (login.loginCookie == "" || login.loginCookie == null) {
           login.loginCookie = await argon2.hash(body.email + body.password + new Date().toDateString()); // Cookie de connexion
           await login.save({ fields: ['loginCookie'] });
         }
@@ -109,7 +110,8 @@ class Login {
     try {
       if (params.id == null || params.id == "")
         return ({success: false, error: "Bad parameters"});
-      let id = params.id.substring(3);
+      let id = params.id;
+      console.log(id.length);
       let login = await mLogin.findOne({
         where: {
           validationHash: id
@@ -119,7 +121,8 @@ class Login {
         return ("Error: Validation link not found");
       else {
         login.validated = true;
-        await login.save({ fields: ['validated'] });
+        login.validationHash = null;
+        await login.save({ fields: ['validated', 'validationHash'] });
         return ("Account validated");
       }
     } catch (err) {
@@ -143,7 +146,7 @@ class Login {
       if (login == null)
         return ({success: false, error: "Couldn't find a matching email address"});
       else {
-        login.forgotHash = await argon2.hash(login.email + login.password + new Date().toDateString);
+        login.forgotHash = uuidv4();
         await login.save({ fields: ['forgotHash']});
         let testAccount = await nodemailer.createTestAccount();
         let transporter = nodemailer.createTransport({ // Envoie du mail de changement mdp
@@ -158,8 +161,8 @@ class Login {
             rejectUnauthorized: false
           }
         });
-        let emailText = `Lien de changement de mot de passe : ${process.env.FRONT}/account/forgot/id=${login.forgotHash}`;
-        let emailHtml = `<a href="${process.env.FRONT}/account/forgot/id=${login.forgotHash}" style="font-size: 26px">Lien de changement de mot de passe</a>`;
+        let emailText = `Lien de changement de mot de passe : ${process.env.FRONT}/account/forgot/${login.forgotHash}`;
+        let emailHtml = `<a href="${process.env.FRONT}/account/forgot/${login.forgotHash}" style="font-size: 26px">Lien de changement de mot de passe</a>`;
         let info = await transporter.sendMail({
           from: `noreply rednight <noreply.rednight@gmail.com>`,
           replyTo: `noreply.rednight@gmail.com`,
@@ -190,7 +193,7 @@ class Login {
     try {
       if (body.password == null || body.password.length < 6 || body.forgotHash == null || body.forgotHash == "")
         return ({success: false, error: "Bad parameters"});
-      let hash = body.forgotHash.substring(3);
+      let hash = body.forgotHash;
       let login = await mLogin.findOne({
         where: {
           forgotHash: hash
@@ -201,7 +204,7 @@ class Login {
       else {
         login.forgotHash = null;
         login.passwordHash = await argon2.hash(body.password);
-        await login.save({ fields: ['forgotHash', 'passwordHash']});
+        await login.save({ fields: ['forgotHash', 'passwordHash'] });
         return ({success: true});
       }
     } catch (err) {
