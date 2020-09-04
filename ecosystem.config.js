@@ -1,6 +1,6 @@
 module.exports = {
     apps: [{
-      name: "sellerieconcept",
+      name: "tekfeed",
       script: "./app.js",
       watch: true,
       watch: ["app.js", "controllers", "models", "routes"],
